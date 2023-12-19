@@ -31,12 +31,18 @@ class ExoPlayerViewModel : ViewModel(){
      *  5 - Finalizar la funcion cambiarCancion
      */
 
+    private val _lista =  MutableStateFlow(lista)
+
+    private val _indice  = MutableStateFlow(0)
+    val indice = _indice.asStateFlow()
+
     // El reproductor de musica, empieza a null
     private val _exoPlayer : MutableStateFlow<ExoPlayer?> = MutableStateFlow(null)
     val exoPlayer = _exoPlayer.asStateFlow()
 
     // La cancion actual que está sonando
-    private val _actual  = MutableStateFlow(R.raw.meteor_light)
+    //private val _actual  = MutableStateFlow(R.raw.meteor_light)
+    private val _actual  = MutableStateFlow(_lista.value[indice.value].song)
     val actual = _actual.asStateFlow()
 
     // La duración de la canción
