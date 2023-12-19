@@ -95,7 +95,7 @@ class ExoPlayerViewModel : ViewModel(){
                 }
                 else if(playbackState == Player.STATE_ENDED){
                     // El Player ha terminado de reproducir el archivo.
-                    CambiarCancion(context)
+                    CambiarSiguienteCancion(context)
 
                 }
                 else if(playbackState == Player.STATE_IDLE){
@@ -122,7 +122,7 @@ class ExoPlayerViewModel : ViewModel(){
         }
     }
 
-    fun CambiarCancion(context: Context) {
+    fun CambiarSiguienteCancion(context: Context) {
 
         /* TODO: 1 - Cambiar la cancion actual y parar el mediaPlayer
          *  2 - Limpiar al _exoPlayer de los mediaItems que tenga
@@ -133,8 +133,24 @@ class ExoPlayerViewModel : ViewModel(){
 
         _exoPlayer.value!!.stop()
         _exoPlayer.value!!.clearMediaItems()
-        _actual.value = R.raw.byebye_lullaby
-        _exoPlayer.value!!.setMediaItem(MediaItem.fromUri(obtenerRuta(context,_actual.value)))
+        _indice.value++
+        if (_indice.value == _lista.value.size) {
+            _indice.value = 0
+        }
+        _exoPlayer.value!!.setMediaItem(MediaItem.fromUri(obtenerRuta(context,_lista.value[indice.value].song)))
+        _exoPlayer.value!!.prepare()
+        _exoPlayer.value!!.playWhenReady = true
+    }
+
+    fun CambiarAnteriorCancion(context: Context) {
+
+        _exoPlayer.value!!.stop()
+        _exoPlayer.value!!.clearMediaItems()
+        _indice.value--
+        if (_indice.value < 0) {
+            _indice.value = _lista.value.size-1
+        }
+        _exoPlayer.value!!.setMediaItem(MediaItem.fromUri(obtenerRuta(context,_lista.value[indice.value].song)))
         _exoPlayer.value!!.prepare()
         _exoPlayer.value!!.playWhenReady = true
     }

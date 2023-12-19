@@ -7,24 +7,35 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class ScaffoldViewModel : ViewModel() {
 
+    private val _lista =  MutableStateFlow(lista)
+
+    private val _indice  = MutableStateFlow(0)
+    val indice = _indice.asStateFlow()
 
     private val _titulo = MutableStateFlow("Player")
     val titulo = _titulo.asStateFlow()
-
 
     // Función que actualiza el título del Top bar
     fun modificarTitulo(nuevoTitulo : String){
          _titulo.value = nuevoTitulo
     }
 
-
-    private val _cancionActual = MutableStateFlow(R.drawable.meteor_light_album)
+    private val _cancionActual = MutableStateFlow(_lista.value[indice.value].imagen)
     val cancionActual = _cancionActual.asStateFlow()
 
+    fun modificarSiguienteCancion(){
+        _indice.value++
+        if (_indice.value == _lista.value.size) {
+            _indice.value = 0
+        }
+        _cancionActual.value = _lista.value[indice.value].imagen
+    }
 
-    // Función que actualiza la canción actual
-    fun modificarCancion(){
-        if(_cancionActual.value == R.drawable.meteor_light_album) _cancionActual.value = R.drawable.symphogear_xv_character_song_4
-        else _cancionActual.value = R.drawable.meteor_light_album
+    fun modificarAnteriorCancion(){
+        _indice.value--
+        if (_indice.value < 0) {
+            _indice.value = _lista.value.size-1
+        }
+        _cancionActual.value = _lista.value[indice.value].imagen
     }
 }

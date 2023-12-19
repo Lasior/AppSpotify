@@ -58,15 +58,18 @@ fun ExoPlayerScreen(viewModelScaffold: ScaffoldViewModel = viewModel()){
             IconButton(onClick = {  }) {
                 Icon(Icons.Default.ArrowLeft, contentDescription = "")
             }
-            IconButton(onClick = {  }) {
+            IconButton(onClick = {
+                exoPlayerViewModel.CambiarAnteriorCancion(contexto);
+                viewModelScaffold.modificarAnteriorCancion()
+            }) {
                 Icon(Icons.Default.ArrowLeft, contentDescription = "")
             }
             IconButton(onClick = { exoPlayerViewModel.PausarOSeguirMusica() }) {
                 Icon(Icons.Default.PlayArrow, contentDescription = "")
             }
             IconButton(onClick = {
-                exoPlayerViewModel.CambiarCancion(contexto);
-                viewModelScaffold.modificarCancion()
+                exoPlayerViewModel.CambiarSiguienteCancion(contexto);
+                viewModelScaffold.modificarSiguienteCancion()
             }) {
                 Icon(Icons.Default.ArrowRight, contentDescription = "")
             }
