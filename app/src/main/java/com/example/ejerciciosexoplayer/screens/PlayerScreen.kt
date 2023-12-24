@@ -55,7 +55,7 @@ fun ExoPlayerScreen(viewModelScaffold: ScaffoldViewModel = viewModel()){
     ){
         Text(text = exoPlayerViewModel.cancionTitulo.value, fontSize = 30.sp)
         Image(
-            painter = painterResource(id = exoPlayerViewModel.cancionActual.collectAsState().value),
+            painter = painterResource(id = exoPlayerViewModel.cancionImagen.collectAsState().value),
             contentDescription ="",
             contentScale = ContentScale.Fit,
             modifier = Modifier
@@ -88,19 +88,16 @@ fun ExoPlayerScreen(viewModelScaffold: ScaffoldViewModel = viewModel()){
             }
             IconButton(onClick = {
                 exoPlayerViewModel.CambiarAnteriorCancion(contexto);
-                exoPlayerViewModel.modificarIconoPlayPause()
             }) {
                 Icon(Icons.Default.ArrowLeft, contentDescription = "")
             }
             IconButton(onClick = {
                 exoPlayerViewModel.PausarOSeguirMusica()
-                exoPlayerViewModel.modificarIconoPlayPause()
             }) {
                 Icon(exoPlayerViewModel.iconoPlayPause.value, contentDescription = "")
             }
             IconButton(onClick = {
                 exoPlayerViewModel.CambiarSiguienteCancion(contexto);
-                exoPlayerViewModel.modificarIconoPlayPause()
             }) {
                 Icon(Icons.Default.ArrowRight, contentDescription = "")
             }

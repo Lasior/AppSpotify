@@ -63,6 +63,18 @@ class ExoPlayerViewModel : ViewModel(){
     private val _progreso = MutableStateFlow(0)
     val progreso = _progreso.asStateFlow()
 
+    // Imagen de la cancion actual
+    private val _cancionImagen = MutableStateFlow(_lista.value[indice.value].imagen)
+    val cancionImagen = _cancionImagen.asStateFlow()
+
+    // Titulo de la cancion actual
+    private val _cancionTitulo  = MutableStateFlow(_lista.value[indice.value].titulo)
+    val cancionTitulo  = _cancionTitulo.asStateFlow()
+
+    // Variable para controlar el icono del boton de play y pause
+    private val _iconoPlayPause = MutableStateFlow(Icons.Default.Pause)
+    val iconoPlayPause = _iconoPlayPause.asStateFlow()
+
     fun crearExoPlayer(context: Context){
         /* TODO : Crear el _exoPlayer usando el build(), prepare() y playWhenReady */
         _exoPlayer.value = ExoPlayer.Builder(context).build()
@@ -133,8 +145,10 @@ class ExoPlayerViewModel : ViewModel(){
         /* TODO: Si el reproductor esta sonando, lo pauso. Si no, lo reproduzco */
         if(_exoPlayer.value!!.isPlaying) {
             _exoPlayer.value!!.pause()
+            _iconoPlayPause.value = Icons.Default.PlayArrow
         } else {
             _exoPlayer.value!!.play()
+            _iconoPlayPause.value = Icons.Default.Pause
         }
     }
 
@@ -159,11 +173,12 @@ class ExoPlayerViewModel : ViewModel(){
                 _indice.value = 0
             }
         }
-        _cancionActual.value = _lista.value[indice.value].imagen
+        _cancionImagen.value = _lista.value[indice.value].imagen
         _cancionTitulo.value = _lista.value[indice.value].titulo
         _exoPlayer.value!!.setMediaItem(MediaItem.fromUri(obtenerRuta(context,_lista.value[indice.value].song)))
         _exoPlayer.value!!.prepare()
         _exoPlayer.value!!.playWhenReady = true
+        _iconoPlayPause.value = Icons.Default.Pause
     }
 
     fun CambiarAnteriorCancion(context: Context) {
@@ -179,11 +194,12 @@ class ExoPlayerViewModel : ViewModel(){
                 _indice.value = _lista.value.size-1
             }
         }
-        _cancionActual.value = _lista.value[indice.value].imagen
+        _cancionImagen.value = _lista.value[indice.value].imagen
         _cancionTitulo.value = _lista.value[indice.value].titulo
         _exoPlayer.value!!.setMediaItem(MediaItem.fromUri(obtenerRuta(context,_lista.value[indice.value].song)))
         _exoPlayer.value!!.prepare()
         _exoPlayer.value!!.playWhenReady = true
+        _iconoPlayPause.value = Icons.Default.Pause
     }
 
     fun ActivarDesactivarRandomCancion() {
@@ -198,23 +214,6 @@ class ExoPlayerViewModel : ViewModel(){
     val titulo = _titulo.asStateFlow()
     fun modificarTitulo(nuevoTitulo : String){
         _titulo.value = nuevoTitulo
-    }
-
-    private val _cancionActual = MutableStateFlow(_lista.value[indice.value].imagen)
-    val cancionActual = _cancionActual.asStateFlow()
-
-    private val _cancionTitulo  = MutableStateFlow(_lista.value[indice.value].titulo)
-    val cancionTitulo  = _cancionTitulo.asStateFlow()
-
-    private val _iconoPlayPause = MutableStateFlow(Icons.Default.PlayArrow)
-    val iconoPlayPause = _iconoPlayPause.asStateFlow()
-
-    fun modificarIconoPlayPause(){
-        if(_iconoPlayPause.value == Icons.Default.PlayArrow) {
-            _iconoPlayPause.value = Icons.Default.Pause
-        } else {
-            _iconoPlayPause.value = Icons.Default.PlayArrow
-        }
     }
 }
 
