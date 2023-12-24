@@ -3,15 +3,16 @@ package com.example.ejerciciosexoplayer.shared
 import android.content.ContentResolver
 import android.content.Context
 import android.content.res.Resources
-import android.media.MediaPlayer
 import android.net.Uri
 import androidx.annotation.AnyRes
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
-import com.example.ejerciciosexoplayer.R
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -31,17 +32,26 @@ class ExoPlayerViewModel : ViewModel(){
      *  5 - Finalizar la funcion cambiarCancion
      */
 
+    // La lista de musica que sonara
     private val _lista =  MutableStateFlow(lista)
 
+    // Indice para reccorrer la lista de musica
     private val _indice  = MutableStateFlow(0)
     val indice = _indice.asStateFlow()
+
+    // Variable para controlar si la musica sonara en bucle o no
+    private val _bucleActive  = MutableStateFlow(false)
+    val bucleActive = _bucleActive.asStateFlow()
+
+    // Variable para controlar si el cambio de musica es aleatorio o no
+    private val _randomActive  = MutableStateFlow(false)
+    val randomActive = _randomActive.asStateFlow()
 
     // El reproductor de musica, empieza a null
     private val _exoPlayer : MutableStateFlow<ExoPlayer?> = MutableStateFlow(null)
     val exoPlayer = _exoPlayer.asStateFlow()
 
     // La cancion actual que está sonando
-    //private val _actual  = MutableStateFlow(R.raw.meteor_light)
     private val _actual  = MutableStateFlow(_lista.value[indice.value].song)
     val actual = _actual.asStateFlow()
 
@@ -94,17 +104,23 @@ class ExoPlayerViewModel : ViewModel(){
                     // No está listo, pero está en ello.
                 }
                 else if(playbackState == Player.STATE_ENDED){
-                    // El Player ha terminado de reproducir el archivo.
-                    CambiarSiguienteCancion(context)
-
+                    // El Player ha terminado de reproducir el archivo si esta el bucle activo repite la misma cancion, si no cambia a la siguiente.
+                    if (bucleActive.value) {
+                        _exoPlayer.value!!.stop()
+                        _exoPlayer.value!!.clearMediaItems()
+                        _exoPlayer.value!!.setMediaItem(MediaItem.fromUri(obtenerRuta(context,_lista.value[indice.value].song)))
+                        _exoPlayer.value!!.prepare()
+                        _exoPlayer.value!!.playWhenReady = true
+                    } else {
+                        CambiarSiguienteCancion(context)
+                    }
                 }
                 else if(playbackState == Player.STATE_IDLE){
                     // El player se ha creado, pero no se ha lanzado la operación prepared.
                 }
 
             }
-        }
-        )
+        })
     }
 
     // Este método se llama cuando el VM se destruya.
@@ -133,10 +149,18 @@ class ExoPlayerViewModel : ViewModel(){
 
         _exoPlayer.value!!.stop()
         _exoPlayer.value!!.clearMediaItems()
-        _indice.value++
-        if (_indice.value == _lista.value.size) {
-            _indice.value = 0
+
+        if (randomActive.value) {
+            val randomNumber = (0 until _lista.value.size).random()
+            _indice.value = randomNumber
+        } else {
+            _indice.value++
+            if (_indice.value == _lista.value.size) {
+                _indice.value = 0
+            }
         }
+        _cancionActual.value = _lista.value[indice.value].imagen
+        _cancionTitulo.value = _lista.value[indice.value].titulo
         _exoPlayer.value!!.setMediaItem(MediaItem.fromUri(obtenerRuta(context,_lista.value[indice.value].song)))
         _exoPlayer.value!!.prepare()
         _exoPlayer.value!!.playWhenReady = true
@@ -146,13 +170,51 @@ class ExoPlayerViewModel : ViewModel(){
 
         _exoPlayer.value!!.stop()
         _exoPlayer.value!!.clearMediaItems()
-        _indice.value--
-        if (_indice.value < 0) {
-            _indice.value = _lista.value.size-1
+        if (_randomActive.value) {
+            val randomNumber = (0 until _lista.value.size).random()
+            _indice.value = randomNumber
+        } else {
+            _indice.value--
+            if (_indice.value < 0) {
+                _indice.value = _lista.value.size-1
+            }
         }
+        _cancionActual.value = _lista.value[indice.value].imagen
+        _cancionTitulo.value = _lista.value[indice.value].titulo
         _exoPlayer.value!!.setMediaItem(MediaItem.fromUri(obtenerRuta(context,_lista.value[indice.value].song)))
         _exoPlayer.value!!.prepare()
         _exoPlayer.value!!.playWhenReady = true
+    }
+
+    fun ActivarDesactivarRandomCancion() {
+        _randomActive.value = _randomActive.value == false
+    }
+
+    fun ActivarDesactivarBucleCancion() {
+        _bucleActive.value = _bucleActive.value == false
+    }
+
+    private val _titulo = MutableStateFlow("Player")
+    val titulo = _titulo.asStateFlow()
+    fun modificarTitulo(nuevoTitulo : String){
+        _titulo.value = nuevoTitulo
+    }
+
+    private val _cancionActual = MutableStateFlow(_lista.value[indice.value].imagen)
+    val cancionActual = _cancionActual.asStateFlow()
+
+    private val _cancionTitulo  = MutableStateFlow(_lista.value[indice.value].titulo)
+    val cancionTitulo  = _cancionTitulo.asStateFlow()
+
+    private val _iconoPlayPause = MutableStateFlow(Icons.Default.PlayArrow)
+    val iconoPlayPause = _iconoPlayPause.asStateFlow()
+
+    fun modificarIconoPlayPause(){
+        if(_iconoPlayPause.value == Icons.Default.PlayArrow) {
+            _iconoPlayPause.value = Icons.Default.Pause
+        } else {
+            _iconoPlayPause.value = Icons.Default.PlayArrow
+        }
     }
 }
 
