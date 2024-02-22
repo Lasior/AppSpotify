@@ -216,8 +216,8 @@ class ExoPlayerViewModel : ViewModel(){
         _titulo.value = nuevoTitulo
     }
 
-    fun CambiarProgreso(nuevoProgreso : Int) {
-        _progreso.value = nuevoProgreso
+    fun CambiarProgreso(nuevoProgreso : Long) {
+        _exoPlayer.value?.seekTo(nuevoProgreso)
     }
 }
 

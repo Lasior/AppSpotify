@@ -76,7 +76,7 @@ fun ExoPlayerScreen(viewModelScaffold: ScaffoldViewModel = viewModel()){
             var valor = (posicion/1000).toFloat()
             Slider(
                 value = valor,
-                onValueChange = { exoPlayerViewModel.CambiarProgreso(it.toInt())},
+                onValueChange = { exoPlayerViewModel.CambiarProgreso((it).toLong())},
                 colors = SliderDefaults.colors(
                     thumbColor = MaterialTheme.colorScheme.secondary,
                     activeTrackColor = MaterialTheme.colorScheme.secondary,
