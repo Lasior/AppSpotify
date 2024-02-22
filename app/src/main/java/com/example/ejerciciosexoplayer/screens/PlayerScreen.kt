@@ -73,16 +73,15 @@ fun ExoPlayerScreen(viewModelScaffold: ScaffoldViewModel = viewModel()){
                     .size(400.dp)
         )
         Column {
-            var valor = (posicion/1000).toFloat()
             Slider(
-                value = valor,
-                onValueChange = { exoPlayerViewModel.CambiarProgreso((it).toLong())},
+                value = (posicion / 1000).toFloat(),
+                onValueChange = { newPosition -> val newPositionMillis = (newPosition * 1000).toInt()
+                    exoPlayerViewModel.CambiarProgreso((newPositionMillis).toLong())},
                 colors = SliderDefaults.colors(
                     thumbColor = MaterialTheme.colorScheme.secondary,
                     activeTrackColor = MaterialTheme.colorScheme.secondary,
                     inactiveTrackColor = MaterialTheme.colorScheme.secondaryContainer,
                 ),
-                steps = 1,
                 valueRange = 0f..(duracion/1000).toFloat()
             )
             var tiempoPosicion = CalcularTiempo(posicion/1000)
