@@ -215,6 +215,10 @@ class ExoPlayerViewModel : ViewModel(){
     fun modificarTitulo(nuevoTitulo : String){
         _titulo.value = nuevoTitulo
     }
+
+    fun CambiarProgreso(nuevoProgreso : Int) {
+        _progreso.value = nuevoProgreso
+    }
 }
 
 // Funcion auxiliar que devuelve la ruta de un fichero a partir de su ID
